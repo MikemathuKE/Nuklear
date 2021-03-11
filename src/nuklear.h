@@ -1781,6 +1781,47 @@ NK_API void nk_window_show(struct nk_context*, const char *name, enum nk_show_st
 /// __cond__    | condition that has to be met to actually commit the visbility state change
 */
 NK_API void nk_window_show_if(struct nk_context*, const char *name, enum nk_show_states, int cond);
+
+/*===============================================================
+ *
+ *                      DOCKING
+ *
+ * ===============================================================*/
+enum nk_dockspace_flags {
+    NK_DOCK_HEADER = NK_FLAG(0),
+    NK_DOCK_LEFT = NK_FLAG(1),
+    NK_DOCK_LOCK = NK_FLAG(2)
+};
+
+struct nk_docked_window {
+    struct nk_window *win;
+    float originalWidth;
+    float originalHeight;
+};
+
+struct nk_dockspace {
+    struct nk_docked_window *windows;
+    int max_windows;
+    int num_windows;
+    nk_flags flags;
+    struct nk_rect bounds;
+    struct nk_dockspace *next;
+};
+
+NK_API void nk_dockspace_init(struct nk_context *ctx, int width, int height);
+NK_API void nk_dockspace_add_window(struct nk_context *ctx, struct nk_window* win);
+NK_API void nk_dockspace_remove_window(struct nk_context *ctx, struct nk_window* win);
+NK_API void nk_dockspace_adjust(struct nk_context *ctx, int width, int height);
+NK_API struct nk_rect nk_dockspace_dock_inner_highlight(struct nk_context *ctx);
+NK_API struct nk_rect nk_dockspace_dock_highlight(const struct nk_context *ctx, nk_flags flag);
+NK_API void nk_dockspace_set(struct nk_context *ctx, struct nk_window *win, nk_flags flag);
+NK_API void nk_dockspace_assign_window(struct nk_context *ctx, struct nk_dockspace *dck, struct nk_window *win, struct nk_rect inner_bound);
+NK_API void nk_dockspace_append_window(struct nk_context *ctx, struct nk_dockspace *dck, struct nk_window *win, struct nk_rect inner_bound);
+NK_API struct nk_dockspace* nk_dockspace_find_window(struct nk_context *ctx, struct nk_window *win);
+NK_API void nk_dockspace_scale_horizontally(struct nk_context *ctx, struct nk_window *win, float delta);
+NK_API void nk_dockspace_scale_vertically(struct nk_context *ctx, struct nk_window *win, float delta);
+NK_API void nk_dockspace_end(struct nk_context *ctx);
+
 /* =============================================================================
  *
  *                                  LAYOUT
